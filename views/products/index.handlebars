@@ -1,0 +1,43 @@
+<h1>{{title}}</h1>
+<div class="d-flex mb-3">
+  <form class="form-inline" action="/products/search" method="get">
+    <div class="form-group">
+      <input type="text" class="form-control" name="q" placeholder="Name" value={{value}}>
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+  {{#if pagination}}
+  <nav>
+    <ul class="pagination">
+      <li class="page-item {{#xif page 1}} disabled {{/xif}}">
+        <a class="page-link" href="?page={{prevPage}}">Previous</a>
+      </li>
+      {{#each arrPage}}
+      <li class="page-item {{#xif page this}} active {{/xif}}">
+        <a class="page-link" href="?page={{this}}">{{this}}</a>
+      </li>
+      {{/each}}
+      <li class="page-item {{#xif page maxPage}} disabled {{/xif}}">
+        <a class="page-link" href="?page={{nextPage}}">Next</a>
+      </li>
+    </ul>
+  </nav>
+  {{/if}}
+</div>
+<div class="row">
+  {{#each products}}
+    <div class="col-md-3">
+      <div class="card">
+        <a href="/products/{{this.id}}">
+          <img class="card-img-top object-fit-cover" src={{#mainImage this.images 0}}{{/mainImage}} height="200" alt={{this.name}}>
+        </a>
+        <div class="card-body">
+          <h4 class="card-title">{{this.name}}</h4>
+          <p class="card-text">{{this.price}}</p>
+          <p class="card-text">{{#slice this.description 100}}{{/slice}}</p>
+          <a href="/cart/add/{{this.id}}" class="btn btn-primary">Add To Cart</a>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+</div>
