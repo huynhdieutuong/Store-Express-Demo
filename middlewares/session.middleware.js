@@ -1,17 +1,15 @@
-const uuid = require('uuid');
+const Session = require('../models/session.model');
 
-const db = require('../db');
-
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   const { sessionId } = req.signedCookies;
   if(!sessionId) {
-    const sessionId = uuid();
-    res.cookie('sessionId', sessionId, {signed: true});
-    db.get('sessions').push({ id: sessionId }).write();
+    const session = await Session.create({});
+    res.cookie('sessionId', session.id, {signed: true});
   }
 
   // Show totalCart
-  const cart = db.get('sessions').find({id: sessionId}).get('cart').value();
+  const session = await Session.findById(sessionId) || {};
+  const cart = session.cart;
   let totalCart = 0;
   for (const product in cart) {
     totalCart += cart[product];

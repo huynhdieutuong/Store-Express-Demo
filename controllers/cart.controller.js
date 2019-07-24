@@ -1,16 +1,15 @@
-const db = require('../db');
+const Session = require('../models/session.model');
+const Product = require('../models/product.model');
 
-module.exports.index = (req, res) => {
+module.exports.index = async (req, res) => {
   const { sessionId } = req.signedCookies;
-  const objectCart = db.get('sessions')
-    .find({ id: sessionId })
-    .get('cart')
-    .value();
+  const session = await Session.findById(sessionId);
+  const objectCart = session.cart;
 
   let arrCart = [];
   let totalMoney = 0;
   for (const productId in objectCart) {
-    let product = db.get('products').find({id: productId}).value();
+    let product = await Product.findById(productId);
     product.quantity = objectCart[productId];
     product.total = product.price * product.quantity;
     totalMoney += product.total;
@@ -24,22 +23,22 @@ module.exports.index = (req, res) => {
   });
 }
 
-module.exports.add = (req, res) => {
+module.exports.add = async (req, res) => {
   const { sessionId } = req.signedCookies;
   const { productId } = req.params;
   if(!sessionId) {
     return res.redirect('/products');
   }
 
-  const count = db.get('sessions')
-    .find({ id: sessionId })
-    .get('cart.' + productId, 0)
-    .value();
+  const session = await Session.findById(sessionId);
+  if(!session.cart) {
+    session.cart = {};
+  };
+  const cart = session.cart;
+  const count = cart[productId] || 0;
+  cart[productId] = count + 1;
 
-  db.get('sessions')
-    .find({ id: sessionId })
-    .set('cart.' + productId, count + 1)
-    .write();
+  await Session.findByIdAndUpdate(sessionId, session);
   
   res.redirect('/products');
 }

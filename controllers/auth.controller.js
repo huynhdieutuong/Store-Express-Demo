@@ -1,22 +1,20 @@
-const uuid = require('uuid');
 const md5 = require('md5');
 
-const db = require('../db');
+const User = require('../models/user.model');
 
 module.exports.register = (req, res) => {
   res.render('auth/register', {title: 'Register'});
 }
 
-module.exports.postRegister = (req, res) => {
+module.exports.postRegister = async (req, res) => {
   const { name, email, password } = req.body;
-  db.get('users').push({
-    id: uuid(),
+  await User.create({
     name,
     email,
     password: md5(password)
-  }).write();
+  });
 
-  res.render('auth/register', { msg: 'Registration Success' });
+  res.redirect('/auth/login');
 }
 
 module.exports.login = (req, res) => {

@@ -1,8 +1,8 @@
-const db = require('../db');
+const User = require('../models/user.model');
 
-module.exports.requireAuth = (req, res, next) => {
+module.exports.requireAuth = async (req, res, next) => {
   const { userId } = req.signedCookies;
-  const user = db.get('users').find({id: userId}).value();
+  const user = await User.findById(userId);
   if(!userId) {
     return res.redirect('/auth/login');
   }
@@ -14,9 +14,9 @@ module.exports.requireAuth = (req, res, next) => {
   next();
 }
 
-module.exports.loggedIn = (req, res, next) => {
+module.exports.loggedIn = async (req, res, next) => {
   const { userId } = req.signedCookies;
-  const user = db.get('users').find({id: userId}).value();
+  const user = await User.findById(userId);
   if(user) {
     return res.redirect('/admin');
   }

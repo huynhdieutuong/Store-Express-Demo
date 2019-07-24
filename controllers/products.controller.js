@@ -1,8 +1,8 @@
-const db = require('../db');
+const Product = require('../models/product.model');
 
-const products = db.get('products').value();
+module.exports.index = async (req, res) => {
+  const products = await Product.find();
 
-module.exports.index = (req, res) => {
   let page = parseInt(req.query.page) || 1;
   const perPage = 8;
   const maxPage = Math.ceil(products.length / perPage);
@@ -40,7 +40,9 @@ module.exports.index = (req, res) => {
   });
 }
 
-module.exports.search = (req, res) => {
+module.exports.search = async (req, res) => {
+  const products = await Product.find();
+
   const { q } = req.query;
   const filtered = products.filter(
     product => product.name.toLowerCase().indexOf(q.toLowerCase()) !== -1);
@@ -51,11 +53,12 @@ module.exports.search = (req, res) => {
   });
 }
 
-module.exports.view = (req, res) => {
+module.exports.view = async (req, res) => {
   const { productId } = req.params;
-  const product = db.get('products').find({ id: productId }).value();
+  const product = await Product.findById(productId);
   res.render('products/view', {
     title: product.name,
     product
   });
 }
+

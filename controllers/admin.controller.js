@@ -1,11 +1,10 @@
-const shortid = require('shortid');
+const Product = require('../models/product.model');
+const User = require('../models/user.model');
 
-const db = require('../db');
-const products = db.get('products').value();
-
-module.exports.index = (req, res) => {
+module.exports.index = async (req, res) => {
+  const products = await Product.find();
   const { userId } = req.signedCookies;
-  const user = db.get('users').find({id: userId}).value();
+  const user = await User.findById(userId);
   const productsOfUser = products.filter(product => product.userId === userId);
 
   res.render('admin/index', {
@@ -18,23 +17,23 @@ module.exports.index = (req, res) => {
 module.exports.createProduct = (req, res) => {
   res.render('admin/create-product', {title: 'Create Product'});
 }
-module.exports.postCreateProduct = (req, res) => {
-  const user = db.get('users').find({id: req.signedCookies.userId}).value();
+module.exports.postCreateProduct = async (req, res) => {
+  const { userId } = req.signedCookies;
   const { name, price, description } = req.body;
   let images = [];
   req.files.forEach(image => images.push('/uploads/products/' + image.filename));
-  db.get('products').push({
-    id: shortid.generate(),
+  await Product.create({
     name,
     price,
     description,
     images,
-    userId: user.id
-  }).write();
+    userId
+  });
   res.redirect('/admin');
 }
 
-module.exports.searchProduct = (req, res) => {
+module.exports.searchProduct = async (req, res) => {
+  const products = await Product.find();
   const { q } = req.query;
   const { userId } = req.signedCookies;
   const productsOfUser = products.filter(product => product.userId === userId);
@@ -48,9 +47,9 @@ module.exports.searchProduct = (req, res) => {
   });
 }
 
-module.exports.editProduct = (req, res) => {
+module.exports.editProduct = async (req, res) => {
   const { productId } = req.params;
-  const product = db.get('products').find({id: productId}).value();
+  const product = await Product.findById(productId);
   res.render('admin/create-product', {
     title: 'Edit Product',
     product

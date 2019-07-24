@@ -1,10 +1,10 @@
 const md5 = require('md5');
-const db = require('../db');
+const User = require('../models/user.model');
 
-module.exports.postRegister = (req, res, next) => {
+module.exports.postRegister = async (req, res, next) => {
   let errors = [];
   const { name, email, password, password2 } = req.body;
-  const user = db.get('users').find({email}).value();
+  const user = await User.findOne({ email });
   if(!name) {
     errors.push('Name is required!');
   }
@@ -29,10 +29,10 @@ module.exports.postRegister = (req, res, next) => {
   next();
 }
 
-module.exports.postLogin = (req, res, next) => {
+module.exports.postLogin = async (req, res, next) => {
   let errors = [];
   const { email, password } = req.body;
-  const user = db.get('users').find({email}).value();
+  const user = await User.findOne({ email });
 
   if(!email) {
     errors.push('Email is required!');
