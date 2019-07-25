@@ -5,7 +5,7 @@
   {{/each}}
 {{/if}}
 <form 
-  action="/admin/{{#if product}}edit-product{{else}}create-product{{/if}}" 
+  action="/admin/{{#if product}}edit-product/{{product.id}}{{else}}create-product{{/if}}" 
   method="post" 
   enctype="multipart/form-data">
   <div class="form-group">
@@ -25,5 +25,9 @@
     <input type="file" class="form-control-file" name="images" id="images" aria-describedby="fileHelpId" multiple>
     <small id="fileHelpId" class="form-text text-muted">Max: 5 images | Max Size: 4MB</small>
   </div>
+  {{#if product}}
+  <a href="/admin/edit-product/{{product.id}}" class="btn btn-primary">Edit</a>
+  {{else}}
   <button type="submit" class="btn btn-primary">Create</button>
+  {{/if}}
 </form>

@@ -55,10 +55,14 @@ module.exports.editProduct = async (req, res) => {
     product
   })
 }
-// module.exports.putEditProduct = (req, res) => {
+module.exports.patchEditProduct = async (req, res) => {
+  const { productId } = req.params;
+  await Product.findByIdAndUpdate(productId, req.body);
+  res.redirect('/admin');
+}
 
-// }
-
-// module.exports.deleteProduct = (req, res) => {
-  
-// }
+module.exports.deleteProduct = async (req, res) => {
+  const { productId } = req.params;
+  await Product.findByIdAndDelete(productId);
+  res.redirect('/admin');
+}
