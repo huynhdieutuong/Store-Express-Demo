@@ -1,9 +1,4 @@
 <h1>{{title}}</h1>
-{{#if errors}}
-  {{#each errors}}
-    <div class="alert alert-danger">{{this}}</div>
-  {{/each}}
-{{/if}}
 <div class="row">
   <form action="/transfer/create" method="post" class="col-md-4">
     <input type="hidden" name="_csrf" value={{csrfToken}}>

@@ -40,5 +40,6 @@ module.exports.add = async (req, res) => {
 
   await Session.findByIdAndUpdate(sessionId, session);
   
+  req.flash('success_msg', 'Added To Cart');
   res.redirect('/products');
 }

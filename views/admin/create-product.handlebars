@@ -1,33 +1,24 @@
 <h1>{{title}}</h1>
-{{#if errors}}
-  {{#each errors}}
-    <div class="alert alert-danger">{{this}}</div>
-  {{/each}}
-{{/if}}
 <form 
-  action="/admin/{{#if product}}edit-product/{{product.id}}{{else}}create-product{{/if}}" 
+  action="/admin/create-product" 
   method="post" 
   enctype="multipart/form-data">
   <div class="form-group">
     <label for="name">Product Name</label>
-    <input type="text" class="form-control" name="name" id="name" {{#if values}} value={{values.name}} {{/if}}>
+    <input type="text" class="form-control" name="name" id="name" {{#if values}} value={{values.name}} {{/if}} required>
   </div>
   <div class="form-group">
     <label for="price">Product Price</label>
-    <input type="number" class="form-control" name="price" id="price" {{#if values}} value={{values.price}} {{/if}}>
+    <input type="number" class="form-control" name="price" id="price" {{#if values}} value={{values.price}} {{/if}} required>
   </div>
   <div class="form-group">
     <label for="description">Description</label>
-    <textarea class="form-control" name="description" id="description" rows="3"> {{#if values}} {{values.description}} {{/if}}</textarea>
+    <textarea class="form-control" name="description" id="description" rows="3" required> {{#if values}} {{values.description}} {{/if}}</textarea>
   </div>
   <div class="form-group">
     <label for="images">Images</label>
-    <input type="file" class="form-control-file" name="images" id="images" aria-describedby="fileHelpId" multiple>
+    <input type="file" class="form-control-file" name="images" id="images" aria-describedby="fileHelpId" multiple required>
     <small id="fileHelpId" class="form-text text-muted">Max: 5 images | Max Size: 4MB</small>
   </div>
-  {{#if product}}
-  <a href="/admin/edit-product/{{product.id}}" class="btn btn-primary">Edit</a>
-  {{else}}
   <button type="submit" class="btn btn-primary">Create</button>
-  {{/if}}
 </form>

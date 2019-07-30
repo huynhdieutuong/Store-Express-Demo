@@ -1,16 +1,13 @@
 const Product = require('../models/product.model');
-const User = require('../models/user.model');
 
 module.exports.index = async (req, res) => {
-  const products = await Product.find();
-  const { userId } = req.signedCookies;
-  const user = await User.findById(userId);
-  const productsOfUser = products.filter(product => product.userId === userId);
+  const userId = req.user.id;
+  const products = await Product.find({userId});
 
   res.render('admin/index', {
     title: 'Admin',
-    user,
-    products: productsOfUser
+    user: req.user,
+    products
   });
 }
 
@@ -18,7 +15,7 @@ module.exports.createProduct = (req, res) => {
   res.render('admin/create-product', {title: 'Create Product'});
 }
 module.exports.postCreateProduct = async (req, res) => {
-  const { userId } = req.signedCookies;
+  const userId = req.user.id;
   const { name, price, description } = req.body;
   let images = [];
   req.files.forEach(image => images.push('/uploads/products/' + image.filename));
@@ -29,16 +26,16 @@ module.exports.postCreateProduct = async (req, res) => {
     images,
     userId
   });
+  req.flash('success_msg', `Added ${name}`);
   res.redirect('/admin');
 }
 
 module.exports.searchProduct = async (req, res) => {
-  const products = await Product.find();
+  const userId = req.user.id;
+  const products = await Product.find({userId});
   const { q } = req.query;
-  const { userId } = req.signedCookies;
-  const productsOfUser = products.filter(product => product.userId === userId);
 
-  const filtered = productsOfUser.filter(
+  const filtered = products.filter(
     product => product.name.toLowerCase().indexOf(q.toLowerCase()) !== -1);
   
   res.render('admin/index', {

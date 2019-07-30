@@ -1,23 +1,14 @@
-const User = require('../models/user.model');
-
 module.exports.requireAuth = async (req, res, next) => {
-  const { userId } = req.signedCookies;
-  const user = await User.findById(userId);
-  if(!userId) {
-    return res.redirect('/auth/login');
-  }
-  if(!user) {
+  if(!req.isAuthenticated()) {
+    req.flash('error_msg', 'Not Authorized');
     return res.redirect('/auth/login');
   }
 
-  res.locals.name = user.name;
   next();
 }
 
 module.exports.loggedIn = async (req, res, next) => {
-  const { userId } = req.signedCookies;
-  const user = await User.findById(userId);
-  if(user) {
+  if(req.isAuthenticated()) {
     return res.redirect('/admin');
   }
 
