@@ -50,7 +50,10 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a href="/admin/delete-product/{{this.id}}" class="btn btn-danger">Delete</a>
+                <form action="/admin/delete-product/{{this.id}}?_method=DELETE" method="post">
+                  <input type="hidden" value="DELETE" name="_method">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
               </div>
             </div>
           </div>

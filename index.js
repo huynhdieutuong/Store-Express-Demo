@@ -71,6 +71,9 @@ app.use(passport.session());
 // Connect Flash Middlware
 app.use(flash());
 
+// Method Override middleware
+app.use(methodOverride('_method'));
+
 // Global Varibales
 app.use(globalVariablesMiddileware);
 

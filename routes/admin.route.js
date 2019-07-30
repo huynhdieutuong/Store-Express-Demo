@@ -13,7 +13,7 @@ router.get('/create-product', controllers.createProduct);
 router.post('/create-product', upload.array('images', 5), controllers.postCreateProduct);
 
 router.get('/edit-product/:productId', controllers.editProduct);
-router.patch('/edit-product/:productId', controllers.patchEditProduct);
+router.put('/edit-product/:productId', upload.array('images', 5), controllers.putEditProduct);
 
 router.delete('/delete-product/:productId', controllers.deleteProduct);
 
