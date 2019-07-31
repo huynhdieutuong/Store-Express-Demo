@@ -10,6 +10,8 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const passport = require('passport');
+const cloudinary = require('cloudinary');
+cloudinary.config(process.env.CLOUDINARY_URL);
 
 const app = express();
 

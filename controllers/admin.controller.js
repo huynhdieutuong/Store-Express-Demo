@@ -1,4 +1,5 @@
 const Product = require('../models/product.model');
+const cloudinary = require('cloudinary');
 
 module.exports.index = async (req, res) => {
   const userId = req.user.id;
@@ -18,7 +19,12 @@ module.exports.postCreateProduct = async (req, res) => {
   const userId = req.user.id;
   const { name, price, description } = req.body;
   let images = [];
-  req.files.forEach(image => images.push('/uploads/products/' + image.filename));
+  // req.files.forEach(image => images.push('/uploads/products/' + image.filename));
+
+  req.files.forEach(async image => {
+    const result = await cloudinary.v2.uploader.upload(image.path, {public_id: "store/products/" + image.filename});
+    images.push(result.url);
+  });
   await Product.create({
     name,
     price,
