@@ -18,20 +18,25 @@ module.exports.createProduct = (req, res) => {
 module.exports.postCreateProduct = async (req, res) => {
   const userId = req.user.id;
   const { name, price, description } = req.body;
-  let images = [];
-  // req.files.forEach(image => images.push('/uploads/products/' + image.filename));
 
-  req.files.forEach(async image => {
-    const result = await cloudinary.v2.uploader.upload(image.path, {public_id: "store/products/" + image.filename});
-    images.push(result.url);
+  let res_promises = req.files.map(image => new Promise((resolve, reject) => {
+    cloudinary.v2.uploader.upload(image.path, {public_id: "store/products/" + Date.now()}, function (error, result) {
+        if(error) reject(error)
+        else resolve(result.url)
+    })
+  })
+  );
+  await Promise.all(res_promises)
+  .then(result => {
+    Product.create({
+      name,
+      price,
+      description,
+      images: result,
+      userId
+    })
   });
-  await Product.create({
-    name,
-    price,
-    description,
-    images,
-    userId
-  });
+
   req.flash('success_msg', `Added ${name}`);
   res.redirect('/admin');
 }
@@ -69,16 +74,23 @@ module.exports.putEditProduct = async (req, res) => {
   const product = await Product.findById(productId);
   const { name, price, description } = req.body;
 
-  let images = [];
-  req.files.forEach(image => images.push('/uploads/products/' + image.filename));
+  let res_promises = req.files.map(image => new Promise((resolve, reject) => {
+    cloudinary.v2.uploader.upload(image.path, {public_id: "store/products/" + Date.now()}, function (error, result) {
+        if(error) reject(error)
+        else resolve(result.url)
+    })
+  })
+  );
+  await Promise.all(res_promises)
+  .then(result => {
+    Product.findByIdAndUpdate(productId, {
+      name,
+      price,
+      description,
+      images: result.length ? result : product.images
+    })
+  });
 
-  const update = {
-    name,
-    price,
-    description,
-    images: images.length ? images : product.images
-  };
-  await Product.findByIdAndUpdate(productId, update);
   req.flash('success_msg', 'Updated Product');
   res.redirect('/admin');
 }
