@@ -18,7 +18,7 @@ const app = express();
 require('./middlewares/passport.middleware');
 
 // Connect MongoDB
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true })
+mongoose.connect(process.env.MONGOBD_URI, { useNewUrlParser: true })
   .then(() => console.log('MongoBD Connected!'))
   .catch(err => console.log(err));
 
@@ -88,5 +88,5 @@ app.use('/cart', cartRoute);
 app.use('/transfer', authMiddleware.requireAuth, csrf({ cookie: true }), transferRoute);
 
 // Port
-const port = 2000;
+const port = process.env.PORT || 2000;
 app.listen(port, () => console.log(`Server started on port ${port}`));
