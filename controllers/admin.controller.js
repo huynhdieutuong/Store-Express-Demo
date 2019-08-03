@@ -3,7 +3,7 @@ const cloudinary = require('cloudinary');
 
 module.exports.index = async (req, res) => {
   const userId = req.user.id;
-  const products = await Product.find({userId});
+  const products = await Product.find({ userId });
 
   res.render('admin/index', {
     title: 'Admin',
@@ -13,28 +13,26 @@ module.exports.index = async (req, res) => {
 }
 
 module.exports.createProduct = (req, res) => {
-  res.render('admin/create-product', {title: 'Create Product'});
+  res.render('admin/create-product', { title: 'Create Product' });
 }
 module.exports.postCreateProduct = async (req, res) => {
   const userId = req.user.id;
   const { name, price, description } = req.body;
 
   let res_promises = req.files.map(image => new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.upload(image.path, {public_id: "store/products/" + Date.now()}, function (error, result) {
-        if(error) reject(error)
-        else resolve(result.url)
+    cloudinary.v2.uploader.upload(image.path, { public_id: "store/products/" + Date.now() }, function (error, result) {
+      if (error) reject(error)
+      else resolve(result.url)
     })
   })
   );
-  await Promise.all(res_promises)
-  .then(result => {
-    Product.create({
-      name,
-      price,
-      description,
-      images: result,
-      userId
-    })
+  const result = await Promise.all(res_promises);
+  await Product.create({
+    name,
+    price,
+    description,
+    images: result,
+    userId
   });
 
   req.flash('success_msg', `Added ${name}`);
@@ -43,12 +41,12 @@ module.exports.postCreateProduct = async (req, res) => {
 
 module.exports.searchProduct = async (req, res) => {
   const userId = req.user.id;
-  const products = await Product.find({userId});
+  const products = await Product.find({ userId });
   const { q } = req.query;
 
   const filtered = products.filter(
     product => product.name.toLowerCase().indexOf(q.toLowerCase()) !== -1);
-  
+
   res.render('admin/index', {
     products: filtered,
     value: q
@@ -59,7 +57,7 @@ module.exports.editProduct = async (req, res) => {
   const { productId } = req.params;
   const product = await Product.findById(productId);
 
-  if(product.userId !== req.user.id) {
+  if (product.userId !== req.user.id) {
     req.flash('error_msg', 'Not Authorized');
     return res.redirect('/admin');
   }
@@ -75,21 +73,19 @@ module.exports.putEditProduct = async (req, res) => {
   const { name, price, description } = req.body;
 
   let res_promises = req.files.map(image => new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.upload(image.path, {public_id: "store/products/" + Date.now()}, function (error, result) {
-        if(error) reject(error)
-        else resolve(result.url)
+    cloudinary.v2.uploader.upload(image.path, { public_id: "store/products/" + Date.now() }, function (error, result) {
+      if (error) reject(error)
+      else resolve(result.url)
     })
   })
   );
-  await Promise.all(res_promises)
-  .then(result => {
-    Product.findByIdAndUpdate(productId, {
-      name,
-      price,
-      description,
-      images: result.length ? result : product.images
-    })
-  });
+  const result = await Promise.all(res_promises);
+  await Product.findByIdAndUpdate(productId, {
+    name,
+    price,
+    description,
+    images: result.length ? result : product.images
+  })
 
   req.flash('success_msg', 'Updated Product');
   res.redirect('/admin');
