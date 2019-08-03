@@ -28,7 +28,7 @@
     "nodemon": "^1.19.1"
   },
   "scripts": {
-    "start": "nodemon --inspect index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
