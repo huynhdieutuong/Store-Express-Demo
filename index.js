@@ -18,7 +18,7 @@ const app = express();
 require('./middlewares/passport.middleware');
 
 // Connect MongoDB
-mongoose.connect(process.env.MONGOBD_URI, { useNewUrlParser: true })
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true })
   .then(() => console.log('MongoBD Connected!'))
   .catch(err => console.log(err));
 
