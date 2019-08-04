@@ -10,6 +10,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const passport = require('passport');
+const fileUpload = require('express-fileupload');
 const cloudinary = require('cloudinary');
 cloudinary.config(process.env.CLOUDINARY_URL);
 
@@ -52,6 +53,12 @@ app.use(express.static('public'));
 // Body Parser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// File Upload middleware
+app.use(fileUpload({
+  useTempFiles: true,
+  limits: { fileSize: 4*1024*1024}
+}))
 
 // Cookie Parser middleware
 app.use(cookieParser(process.env.SESSION_SECRET));

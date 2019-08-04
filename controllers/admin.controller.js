@@ -18,9 +18,10 @@ module.exports.createProduct = (req, res) => {
 module.exports.postCreateProduct = async (req, res) => {
   const userId = req.user.id;
   const { name, price, description } = req.body;
+  const files = req.files.images;
 
-  let res_promises = req.files.map(image => new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.upload(image.path, { public_id: "store/products/" + Date.now() }, function (error, result) {
+  let res_promises = files.map(image => new Promise((resolve, reject) => {
+    cloudinary.v2.uploader.upload(image.tempFilePath, { public_id: "store/products/" + Date.now() }, function (error, result) {
       if (error) reject(error)
       else resolve(result.url)
     })
@@ -71,9 +72,10 @@ module.exports.putEditProduct = async (req, res) => {
   const { productId } = req.params;
   const product = await Product.findById(productId);
   const { name, price, description } = req.body;
+  const files = req.files.images;
 
-  let res_promises = req.files.map(image => new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.upload(image.path, { public_id: "store/products/" + Date.now() }, function (error, result) {
+  let res_promises = files.map(image => new Promise((resolve, reject) => {
+    cloudinary.v2.uploader.upload(image.tempFilePath, { public_id: "store/products/" + Date.now() }, function (error, result) {
       if (error) reject(error)
       else resolve(result.url)
     })
