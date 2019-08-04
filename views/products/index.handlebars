@@ -4,7 +4,7 @@
     <div class="form-group">
       <input type="text" class="form-control" name="q" placeholder="Name" value={{value}}>
     </div>
-    <button type="submit" class="btn btn-primary">Search</button>
+    <button type="submit" class="btn btn-primary ml-2">Search</button>
   </form>
   {{#if pagination}}
   <nav>
@@ -33,7 +33,7 @@
         </a>
         <div class="card-body">
           <h4 class="card-title">{{this.name}}</h4>
-          <p class="card-text">{{this.price}}</p>
+          <p class="card-text">${{this.price}}</p>
           <p class="card-text">{{#slice this.description 100}}{{/slice}}</p>
           <a href="/cart/add/{{this.id}}" class="btn btn-primary">Add To Cart</a>
         </div>

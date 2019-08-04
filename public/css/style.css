@@ -1,3 +1,7 @@
 .object-fit-cover {
   object-fit: cover;
 }
+.total-money {
+  font-size: 20px;
+  font-weight: bold;
+}
